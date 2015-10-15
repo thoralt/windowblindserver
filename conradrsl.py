@@ -1,5 +1,22 @@
 # -*- coding: utf-8 -*-
 
+# windowblindserver
+# A python server for Raspberry Pi to control window blinds equipped with Conrad RSL actuators
+# Copyright (C) 2015 Thoralt Franz
+#
+# This program is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation, either version 3 of the License, or
+# (at your option) any later version.
+#
+# This program is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License
+# along with this program.  If not, see <http://www.gnu.org/licenses/>.
+
 # Timing:  "0" bit                          "1" bit                      pause after last bit
 # SPI data: 0xFF  0x00  0x00                0xFF  0xFF  0x00             0x00 * 9
 #           _____              __ ...       ____________       __ ... __                      ____
@@ -20,7 +37,7 @@ import sys
 
 # =============================================================================================================
 # =============================================================================================================
-class Conrad_RSL:
+class ConradRSL:
 
     # ---------------------------------------------------------------------------------------------------------
     # class variables
@@ -67,13 +84,13 @@ class Conrad_RSL:
 
     # ---------------------------------------------------------------------------------------------------------
     # ---------------------------------------------------------------------------------------------------------
-    def addDevice(self, device):
+    def add_device(self, device):
         device.commandManager = self
         self.devices.append(device)
 
     # ---------------------------------------------------------------------------------------------------------
     # ---------------------------------------------------------------------------------------------------------
-    def sendCode(self, bits):
+    def send_code(self, bits):
 
         # increment message counter
         self.counter += 1
@@ -103,7 +120,7 @@ class Conrad_RSL:
 
     # ---------------------------------------------------------------------------------------------------------
     # ---------------------------------------------------------------------------------------------------------
-    def moveToPosition(self, address, targetPosition):
+    def move_to_position(self, address, target_position):
         # look up device address
         device = None
         for d in self.devices:
@@ -117,14 +134,14 @@ class Conrad_RSL:
 
         # notify device class instance to move to target position
         print 'Conrad_RSL.moveToPosition(\'%s\', %.1f): Found device \'%s\'' % \
-            (address, targetPosition, device.name)
-        return device.moveToPosition(targetPosition)
+            (address, target_position, device.name)
+        return device.move_to_position(target_position)
 
     # ---------------------------------------------------------------------------------------------------------
     # ---------------------------------------------------------------------------------------------------------
-    def sendCmd(self, cmd):
+    def send_cmd(self, cmd):
         if cmd in self.codes:
-            self.sendCode(self.codes[cmd])
+            self.send_code(self.codes[cmd])
             return True
         else:
             return False
