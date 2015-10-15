@@ -1,9 +1,10 @@
 # -*- coding: utf-8 -*-
 
-import sys, threading, time, traceback
+import threading, time, traceback
 
-#==============================================================================================================
-#==============================================================================================================
+
+# =============================================================================================================
+# =============================================================================================================
 class Shutter:
     def __init__(self, address, name, closingTime):
         self.address = address
@@ -12,6 +13,8 @@ class Shutter:
         self.isMoving = False
         self.position = 100
         self.targetPosition = 100
+        self.direction = None
+        self.commandManager = None
 
     def moveToPosition(self, targetPosition):
 
@@ -24,9 +27,6 @@ class Shutter:
         self.targetPosition = targetPosition
 
         # calculate direction and moving time
-        movingtime = 0
-        direction = ''
-        stopdirection = ''
         if self.targetPosition >= 100:
             # always move full time up to sync position
             movingtime = self.closingTime
@@ -51,15 +51,15 @@ class Shutter:
         self.delayedStop(movingtime)
         return self.commandManager.sendCmd(self.address + '-' + self.direction)
 
-
-    #----------------------------------------------------------------------------------------------------------
-    #----------------------------------------------------------------------------------------------------------
+    # ---------------------------------------------------------------------------------------------------------
+    # ---------------------------------------------------------------------------------------------------------
     def delayedStop(self, delay):
         t = delayedStopThread(self, delay)
         t.start()
 
-#==============================================================================================================
-#==============================================================================================================
+
+# =============================================================================================================
+# =============================================================================================================
 class delayedStopThread(threading.Thread):
     def __init__(self, device, delay):
         print 'delayedExecutionThread.init(%s:\'%s\', %f)' % (device.address, device.name, delay)
