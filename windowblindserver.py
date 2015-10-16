@@ -50,6 +50,72 @@ class ConnectionThread(threading.Thread):
                         self.connection.send(buf + ': Okay.')
                     else:
                         self.connection.send(buf + ': Error.')
+                elif cmd[0] == 'get-status':
+                    device = None
+                    for d in self.shutterManager.devices:
+                        if d.address == cmd[1]:
+                            device = d
+
+                    if device is None:
+                        self.connection.send('position_state=STOPPED' +
+                                             ':CurrentPosition=99' +
+                                             ':TargetPosition=99')
+                    else:
+                        if device.isMoving:
+                            if device.direction == 'up':
+                                position_state = 'INCREASING'
+                            else:
+                                position_state = 'DECREASING'
+                        else:
+                            position_state = 'STOPPED'
+                        self.connection.send('position_state=' + position_state +
+                                             ':CurrentPosition=' + str(device.position) +
+                                             ':TargetPosition=' + str(device.targetPosition))
+                elif cmd[0] == 'getCurrentPosition':
+                    device = None
+                    for d in self.shutterManager.devices:
+                        if d.address == cmd[1]:
+                            device = d
+                    if device is None:
+                        self.connection.send('99')
+                    else:
+                        self.connection.send(str(device.position))
+                elif cmd[0] == 'getTargetPosition':
+                    device = None
+                    for d in self.shutterManager.devices:
+                        if d.address == cmd[1]:
+                            device = d
+                    if device is None:
+                        self.connection.send('99')
+                    else:
+                        self.connection.send(str(device.targetPosition))
+                elif cmd[0] == 'setTargetPosition':
+                    device = None
+                    for d in self.shutterManager.devices:
+                        if d.address == cmd[1]:
+                            device = d
+                    if device is None:
+                        self.connection.send('0')
+                    else:
+                        self.shutterManager.move_to_position(cmd[1], float(cmd[2]))
+                        self.connection.send('1')
+                elif cmd[0] == 'getPositionState':
+                    device = None
+                    for d in self.shutterManager.devices:
+                        if d.address == cmd[1]:
+                            device = d
+                    if device is None:
+                        self.connection.send('STOPPED')
+                    else:
+                        if device.isMoving:
+                            if device.direction == 'up':
+                                position_state = 'INCREASING'
+                            else:
+                                position_state = 'DECREASING'
+                        else:
+                            position_state = 'STOPPED'
+                        self.connection.send(position_state)
+
         except Exception as e:
             print 'Exception during receive'
             traceback.print_exc()
