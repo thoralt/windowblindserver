@@ -18,7 +18,7 @@ I reverse engineered the protocol using a scope attached to the remote control, 
                "Zero-bit"                    "One-bit"                "pause between packets"
 ```
 
-I defined short pulses followed by a long pause as binary "0" and long pulses followed by a short pause as binary "1". My remote control uses 33 bits of data, followed by a 5.4 ms long pause. Data packets are repeated minimum five times, and if you get the timing right, the actuators start clicking :)
+I defined short pulses followed by a long pause as binary "0" and long pulses followed by a short pause as binary "1". My remote control transmits 33 bits of data, followed by a 5.4 ms long pause. Data packets are repeated minimum five times, and if you get the timing right, the actuators start clicking :)
 
 My remote is able to switch 12 window blinds up and down (I have seen remotes with 16 channels). The channel and up/down information is somehow encoded into the bits, I didn't bother to work that out and simply copied the bit streams into the source code. They have the following structure:
 ```
