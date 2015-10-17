@@ -114,9 +114,9 @@ class ConradRSL:
             buf += '\x00\x00\x00\x00\x00\x00\x00\x00\x00'
 
         # send the packet
-#        wiringpi.wiringPiSPIDataRW(self.SPI_CHANNEL, buf)
-        print 'OK - WARNING: DEBUG MODE, DID NOT ACTUALLY TRANSMIT DATA'
-#        print 'OK'
+        wiringpi.wiringPiSPIDataRW(self.SPI_CHANNEL, buf)
+#        print 'OK - WARNING: DEBUG MODE, DID NOT ACTUALLY TRANSMIT DATA'
+        print 'OK'
 
     # ---------------------------------------------------------------------------------------------------------
     # ---------------------------------------------------------------------------------------------------------
