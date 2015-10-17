@@ -129,7 +129,8 @@ class ConradRSL:
 
         # device not in list?
         if device is None:
-            print 'Device not found: ' + address
+            print 'Conrad_RSL.moveToPosition(\'%s\', %.1f): Device not found.' % \
+                (address, target_position)
             return False
 
         # notify device class instance to move to target position

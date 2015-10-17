@@ -95,8 +95,10 @@ class ConnectionThread(threading.Thread):
                         if d.address == cmd[1]:
                             device = d
                     if device is None:
+                        print 'Did not find device ' + d.address
                         self.connection.send('0')
                     else:
+                        print 'Found device ' + d.address + ': \'' + d.name + '\''
                         self.shutterManager.move_to_position(cmd[1], float(cmd[2]))
                         self.connection.send('1')
                 elif cmd[0] == 'getPositionState':
