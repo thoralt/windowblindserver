@@ -47,6 +47,7 @@ class Shutter:
         if self.isMoving:
             print 'Shutter.moveToPosition(): Currently moving, adding new targetPosition to queue.'
             self.queue.append(targetPosition)
+            return
 
         # check if we need to move at all
         if self.position == targetPosition:
