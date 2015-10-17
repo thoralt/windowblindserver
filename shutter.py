@@ -108,10 +108,10 @@ class DelayedStopThread(threading.Thread):
             print '%s reached position %d' % (d.address, d.targetPosition)
 
             # queue contains commands?
-            while d.queue.count() > 0:
+            while len(d.queue) > 0:
                 # get next target position
                 d.targetPosition = d.queue.pop(0)
-                print '%s next position in queue: %d, items left: %d' % (d.address, d.targetPosition, d.queue.count())
+                print '%s next position in queue: %d, items left: %d' % (d.address, d.targetPosition, len(d.queue))
 
                 # depending on new target position either continue to move or
                 # change direction
