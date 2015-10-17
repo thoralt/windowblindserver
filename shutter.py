@@ -76,7 +76,7 @@ class Shutter:
                 self.direction = 'dn'
                 t = (self.position - self.targetPosition)/100 * self.closingTime
 
-        print 'moveToPosition(): Current position=%.1f, target position=%.1f, direction=\'%s\', time=%.1f' \
+        print 'moveToPosition(): Current position=%d, target position=%d, direction=\'%s\', time=%.3f seconds' \
             % (self.position, self.targetPosition, self.direction, t)
 
         self.delayed_stop(t)
@@ -93,7 +93,7 @@ class Shutter:
 # =============================================================================================================
 class DelayedStopThread(threading.Thread):
     def __init__(self, device, delay):
-        print 'delayedExecutionThread.init(%s:\'%s\', %f)' % (device.address, device.name, delay)
+        print 'delayedExecutionThread.init(%s:\'%s\', %.3f)' % (device.address, device.name, delay)
         self.device = device
         self.delay = delay
         threading.Thread.__init__(self)
@@ -103,7 +103,7 @@ class DelayedStopThread(threading.Thread):
             d = self.device
 
             # actuator is moving, now wait until we reach target position
-            print 'delayedExecutionThread.run() start, waiting %f s...' % self.delay
+            print 'delayedExecutionThread.run() start, waiting %.3f seconds...' % self.delay
             time.sleep(self.delay)
             d.position = d.targetPosition
             print '%s reached position %d' % (d.address, d.targetPosition)
@@ -119,14 +119,14 @@ class DelayedStopThread(threading.Thread):
                 if d.direction == 'up' and d.targetPosition > d.position:
                     # can continue to move up
                     t = (d.targetPosition - d.position)/100 * d.closingTime
-                    print '%s can continue to move up, waiting %.1f seconds' % (d.address, t)
+                    print '%s can continue to move up, waiting %.3f seconds' % (d.address, t)
                     time.sleep(t)
                     d.position = d.targetPosition
                     print '%s reached position %d' % (d.address, d.targetPosition)
                 elif d.direction == 'dn' and d.targetPosition < d.position:
                     # can continue to move down
                     t = (d.position - d.targetPosition)/100 * d.closingTime
-                    print '%s can continue to move down, waiting %.1f seconds' % (d.address, t)
+                    print '%s can continue to move down, waiting %.3f seconds' % (d.address, t)
                     time.sleep(t)
                     d.position = d.targetPosition
                     print '%s reached position %d' % (d.address, d.targetPosition)
@@ -147,7 +147,7 @@ class DelayedStopThread(threading.Thread):
                     # same command to start again in opposite direction
                     d.commandManager.send_cmd(cmd)
 
-                    print '%s changed direction, waiting %.1f seconds' % (d.address, t)
+                    print '%s changed direction, waiting %.3f seconds' % (d.address, t)
                     time.sleep(t)
                     d.position = d.targetPosition
                     print '%s reached position %d' % (d.address, d.targetPosition)
