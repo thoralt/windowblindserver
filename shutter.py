@@ -37,10 +37,16 @@ class Shutter:
         self.targetPosition = 100
         self.direction = None
         self.commandManager = None
+        self.queue = []
 
     # ---------------------------------------------------------------------------------------------------------
     # ---------------------------------------------------------------------------------------------------------
     def move_to_position(self, targetPosition):
+
+        # if currently moving, add next target position to queue, will be processed when current movement ends
+        if self.isMoving:
+            print 'Shutter.moveToPosition(): Currently moving, adding new targetPosition to queue.'
+            self.queue.append(targetPosition)
 
         # check if we need to move at all
         if self.position == targetPosition:
@@ -53,26 +59,26 @@ class Shutter:
         # calculate direction and moving time
         if self.targetPosition >= 100:
             # always move full time up to sync position
-            movingtime = self.closingTime
+            t = self.closingTime
             self.direction = 'up'
             print 'moveToPosition(): Target position = 100 -> performing full up cycle'
         elif self.targetPosition <=0:
             # always move full time down to sync position
-            movingtime = self.closingTime
+            t = self.closingTime
             self.direction = 'dn'
             print 'moveToPosition(): Target position = 0 -> performing full down cycle'
         else:
             if self.targetPosition > self.position:
                 self.direction = 'up'
-                movingtime = (self.targetPosition - self.position)/100 * self.closingTime
+                t = (self.targetPosition - self.position)/100 * self.closingTime
             else:
                 self.direction = 'dn'
-                movingtime = (self.position - self.targetPosition)/100 * self.closingTime
+                t = (self.position - self.targetPosition)/100 * self.closingTime
 
         print 'moveToPosition(): Current position=%.1f, target position=%.1f, direction=\'%s\', time=%.1f' \
-            % (self.position, self.targetPosition, self.direction, movingtime)
+            % (self.position, self.targetPosition, self.direction, t)
 
-        self.delayed_stop(movingtime)
+        self.delayed_stop(t)
         return self.commandManager.send_cmd(self.address + '-' + self.direction)
 
     # ---------------------------------------------------------------------------------------------------------
@@ -93,16 +99,66 @@ class DelayedStopThread(threading.Thread):
 
     def run(self):
         try:
+            d = self.device
+
+            # actuator is moving, now wait until we reach target position
             print 'delayedExecutionThread.run() start, waiting %f s...' % self.delay
             time.sleep(self.delay)
-            print 'delayedExecutionThread.run() finished waiting'
-            if self.device.direction == 'up':
-                cmd = self.device.address + '-dn'
+            d.position = d.targetPosition
+            print '%s reached position %d' % (d.address, d.targetPosition)
+
+            # queue contains commands?
+            while d.queue.count() > 0:
+                # get next target position
+                d.targetPosition = d.queue.pop(0)
+                print '%s next position in queue: %d, items left: %d' % (d.address, d.targetPosition, d.queue.count())
+
+                # depending on new target position either continue to move or
+                # change direction
+                if d.direction == 'up' and d.targetPosition > d.position:
+                    # can continue to move up
+                    t = (d.targetPosition - d.position)/100 * d.closingTime
+                    print '%s can continue to move up, waiting %.1f seconds' % (d.address, t)
+                    time.sleep(t)
+                    d.position = d.targetPosition
+                    print '%s reached position %d' % (d.address, d.targetPosition)
+                elif d.direction == 'dn' and d.targetPosition < d.position:
+                    # can continue to move down
+                    t = (d.position - d.targetPosition)/100 * d.closingTime
+                    print '%s can continue to move down, waiting %.1f seconds' % (d.address, t)
+                    time.sleep(t)
+                    d.position = d.targetPosition
+                    print '%s reached position %d' % (d.address, d.targetPosition)
+                else:
+                    # direction changed for next queue element
+                    print '%s needs to change direction, stopping and starting.' % d.address
+                    if d.direction == 'up':
+                        cmd = d.address + '-dn'
+                        d.direction = 'dn'
+                        t = (d.position - d.targetPosition)/100 * d.closingTime
+                    else:
+                        cmd = d.address + '-up'
+                        d.direction = 'up'
+                        t = (d.targetPosition - d.position)/100 * d.closingTime
+
+                    # first command to stop
+                    d.commandManager.send_cmd(cmd)
+                    # same command to start again in opposite direction
+                    d.commandManager.send_cmd(cmd)
+
+                    print '%s changed direction, waiting %.1f seconds' % (d.address, t)
+                    time.sleep(t)
+                    d.position = d.targetPosition
+                    print '%s reached position %d' % (d.address, d.targetPosition)
+
+            # queue is now empty -> issue stop command
+            if d.direction == 'up':
+                cmd = d.address + '-dn'
             else:
-                cmd = self.device.address + '-up'
-            self.device.commandManager.send_cmd(cmd)
-            self.device.position = self.device.targetPosition
-            self.device.isMoving = False
+                cmd = d.address + '-up'
+            d.commandManager.send_cmd(cmd)
+            d.isMoving = False
+
         except Exception as e:
             print 'Exception during delayedExecutionThread'
             traceback.print_exc()

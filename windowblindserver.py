@@ -140,18 +140,18 @@ def close_socket():
 shutterManager = ConradRSL()
 
 # add devices to manager
-shutterManager.add_device(Shutter('1.1', 'Bad', 16))
-shutterManager.add_device(Shutter('1.2', 'Arbeitszimmer', 16))
-shutterManager.add_device(Shutter('1.3', 'Wohnzimmer 3', 16))
-shutterManager.add_device(Shutter('2.1', 'Wohnzimmer 2', 16))
-shutterManager.add_device(Shutter('2.2', 'Wohnzimmer 1', 16))
-shutterManager.add_device(Shutter('2.3', 'Vorsaal', 16))
-shutterManager.add_device(Shutter('3.1', 'Küche 1', 16))
-shutterManager.add_device(Shutter('3.2', 'Küche 2', 16))
-shutterManager.add_device(Shutter('3.3', 'Küche 3', 16))
-shutterManager.add_device(Shutter('4.1', 'Küche 4', 16))
-# shutterManager.addDevice(Shutter('4.2', '', 16))
-# shutterManager.addDevice(Shutter('4.3', '', 16))
+shutterManager.add_device(Shutter('1.1', 'Bad', 19.5))
+shutterManager.add_device(Shutter('1.2', 'Arbeitszimmer', 19.5))
+shutterManager.add_device(Shutter('1.3', 'Wohnzimmer 3', 19.5))
+shutterManager.add_device(Shutter('2.1', 'Wohnzimmer 2', 19.5))
+shutterManager.add_device(Shutter('2.2', 'Wohnzimmer 1', 19.5))
+shutterManager.add_device(Shutter('2.3', 'Vorsaal', 19.5))
+shutterManager.add_device(Shutter('3.1', 'Küche 1', 19.5))
+shutterManager.add_device(Shutter('3.2', 'Küche 2', 19.5))
+shutterManager.add_device(Shutter('3.3', 'Küche 3', 19.5))
+shutterManager.add_device(Shutter('4.1', 'Küche 4', 19.5))
+# shutterManager.addDevice(Shutter('4.2', '', 19.5))
+# shutterManager.addDevice(Shutter('4.3', '', 19.5))
 
 SERVER_IP = '192.168.178.219'
 SERVER_PORT = 8089
