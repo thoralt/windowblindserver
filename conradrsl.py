@@ -31,6 +31,16 @@
 #
 # 1 Tick = 600 us (8 SPI bits) -> 75 µs per bit, SPI clock = 13333 Hz
 # empirically tested SPI clock of 13075 Hz matches remote control output better
+#
+# Data format:
+# nn bb 1110 1000011010010101000000000
+# |  |  |--| |-----------------------|
+# |  |  |    |
+# |  |  |    +- remote control ID (constant, but unique to your system)
+# |  |  +------ group ID and switch state (decoded via look up table
+# |  +--------- button ID (0...3, LSB first)
+# +------------ message counter (0...3, LSB first)
+
 import wiringpi2 as wiringpi
 import sys
 
