@@ -90,7 +90,7 @@ class ConradRSL:
         # increment message counter
         self.counter += 1
 
-        print 'Sending code ' + bits + ':',
+        print('Sending code ' + bits)
         sys.stdout.flush()
 
         # repeat 5 times
@@ -110,7 +110,6 @@ class ConradRSL:
 
         # send the packet
         wiringpi.wiringPiSPIDataRW(self.SPI_CHANNEL, buf)
-        print 'OK'
 
     # ---------------------------------------------------------------------------------------------------------
     # ---------------------------------------------------------------------------------------------------------
@@ -123,13 +122,13 @@ class ConradRSL:
 
         # device not in list?
         if device is None:
-            print 'conradrsl.moveToPosition(\'%s\', %.1f): Device not found.' % \
-                (address, target_position)
+            print('conradrsl.moveToPosition(\'%s\', %.1f): Device not found.' % \
+                (address, target_position))
             return False
 
         # notify device class instance to move to target position
-        print 'conradrsl.moveToPosition(\'%s\', %.1f): Found device \'%s\'' % \
-            (address, target_position, device.name)
+        print('conradrsl.moveToPosition(\'%s\', %.1f): Found device \'%s\'' % \
+            (address, target_position, device.name))
         return device.move_to_position(target_position)
 
     # ---------------------------------------------------------------------------------------------------------
