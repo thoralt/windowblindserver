@@ -36,8 +36,8 @@
 # nn bb 1110 1000011010010101000000000
 # |  |  |--| |-----------------------|
 # |  |  |    |
-# |  |  |    +- remote control ID (constant, but unique to your system)
-# |  |  +------ group ID and switch state (decoded via look up table
+# |  |  |    +- remote control ID (constant/unique to your system; need to check length, could be 24 bits)
+# |  |  +------ group ID and switch state (coding unknown, using look up table)
 # |  +--------- button ID (0...3, LSB first)
 # +------------ message counter (0...3, LSB first)
 
