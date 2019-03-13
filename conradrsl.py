@@ -136,7 +136,7 @@ class ConradRSL:
     # ---------------------------------------------------------------------------------------------------------
     def send_cmd(self, cmd):
         if cmd in self.codes:
-            self.send_code(self.codes[cmd] + REMOTE_ID)
+            self.send_code(self.codes[cmd] + self.REMOTE_ID)
             return True
         else:
             return False
